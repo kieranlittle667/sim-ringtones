@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased — 0.3.0
+## 0.3.0 — 24 October 2026
 
 - Check GitHub for updates on opening the app, with a daily limit and an off switch.
 - Download and verify stable releases, then hand installation to Android for confirmation.

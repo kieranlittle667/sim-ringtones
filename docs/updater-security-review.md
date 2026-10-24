@@ -1,6 +1,6 @@
 # Updater review — 24 October 2026
 
-Scope: the proposed 0.3.0 updater. The existing ringtone implementation is unchanged apart from adding update controls to its activity.
+Scope: the 0.3.0 updater. The existing ringtone implementation is unchanged apart from adding update controls to its activity.
 
 ## Trust boundaries
 
