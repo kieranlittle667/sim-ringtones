@@ -44,6 +44,6 @@ Build instructions and test commands are in [Contributing](CONTRIBUTING.md). The
 
 ## Credits and licence
 
-Created by Kieran Little, co-authored with OpenAI Codex. A GPT-6-family model was used for release preparation.
+Created by Kieran Little, co-authored with OpenAI Codex (GPT-6 Sol).
 
 Released under the [MIT licence](LICENSE). Android API reference: [RingtoneManager](https://developer.android.com/reference/android/media/RingtoneManager).
