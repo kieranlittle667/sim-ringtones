@@ -16,7 +16,7 @@ jobs:
       - name: Download build tools
         shell: pwsh
         run: ./setup-tools.ps1
-      - name: Check URI boundaries and manifest
+      - name: Check ringtone and updater boundaries
         shell: pwsh
         run: ./tests/run-tests.ps1
       - name: Build development APK and device tests

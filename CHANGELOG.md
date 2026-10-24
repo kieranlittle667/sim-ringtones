@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased — 0.3.0
+
+- Check GitHub for updates on opening the app, with a daily limit and an off switch.
+- Download and verify stable releases, then hand installation to Android for confirmation.
+- Show release notes and accessible update status in the app.
+
+
 ## 0.2.0 â€” 24 October 2026
 
 First public release, based on the Pixel 8 prototype.

@@ -17,7 +17,10 @@ if($Release) {
         throw 'Release requires an existing private keystore and SIM_RINGTONES_STORE_PASSWORD. No development-key fallback.'
     }
     $password='env:SIM_RINGTONES_STORE_PASSWORD'
-    $apk=Join-Path $output 'sim-ringtones-0.2.0.apk'
+    [xml]$manifest=Get-Content -LiteralPath (Join-Path $root 'AndroidManifest.xml')
+    $version=$manifest.manifest.GetAttribute('versionName','http://schemas.android.com/apk/res/android')
+    if($version -notmatch '^\d+\.\d+\.\d+$') { throw 'Invalid release version' }
+    $apk=Join-Path $output ('sim-ringtones-'+$version+'.apk')
 } else {
     $KeyStore=Join-Path $root '.tools/test-key.p12'
     $password='pass:android'
