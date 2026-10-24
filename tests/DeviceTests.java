@@ -24,6 +24,7 @@ public class DeviceTests extends Instrumentation {
     private String global;
     private int buttons,headings;
     private Configuration originalConfig;
+    private boolean automaticOriginally;
     @Override public void onCreate(Bundle args) { super.onCreate(args); start(); }
     private void check(boolean pass,String description) {
         if(!pass) throw new AssertionError(description);
@@ -35,6 +36,9 @@ public class DeviceTests extends Instrumentation {
         Bundle result=new Bundle(); boolean passed=false;
         try {
             context=getTargetContext();
+            // Do not contact GitHub as a side effect of the ringtone UI tests.
+            automaticOriginally=context.getSharedPreferences("updates",Context.MODE_PRIVATE).getBoolean("automatic",true);
+            context.getSharedPreferences("updates",Context.MODE_PRIVATE).edit().putBoolean("automatic",false).commit();
             global=Settings.System.getString(context.getContentResolver(),Settings.System.RINGTONE);
             TelecomManager telecom=context.getSystemService(TelecomManager.class);
             for(PhoneAccountHandle h:telecom.getCallCapablePhoneAccounts()) {
@@ -80,8 +84,8 @@ public class DeviceTests extends Instrumentation {
                 buttons=0;headings=0;
                 inspect(activity.getWindow().getDecorView());
             });
-            check(buttons==7,"Seven labelled native buttons with at least 48dp touch targets");
-            check(headings==3,"App title and both SIM names are accessibility headings");
+            check(buttons==9,"Nine labelled visible native buttons with at least 48dp touch targets");
+            check(headings==4,"App title, SIM names and Updates are accessibility headings");
             check(Settings.System.canWrite(context),"Required system settings access granted");
             snapshot("layout-normal.png");
             originalConfig=new Configuration(activity.getResources().getConfiguration());
@@ -137,6 +141,7 @@ public class DeviceTests extends Instrumentation {
                 });
             } catch(Throwable e) { passed=false;report.append("RESTORE FAILURE: ").append(e).append('\n'); }
         }
+        if(context!=null) context.getSharedPreferences("updates",Context.MODE_PRIVATE).edit().putBoolean("automatic",automaticOriginally).commit();
         result.putString("stream",report.toString()); finish(passed?Activity.RESULT_OK:Activity.RESULT_CANCELED,result);
     }
     private void render() {
@@ -167,6 +172,7 @@ public class DeviceTests extends Instrumentation {
         if(v instanceof ViewGroup) { ViewGroup g=(ViewGroup)v; for(int i=0;i<g.getChildCount();i++) checkNoClipping(g.getChildAt(i)); }
     }
     private void inspect(View v) {
+        if(v.getVisibility()!=View.VISIBLE) return;
         if(v.isAccessibilityHeading()) headings++;
         if(v instanceof Button) {
             Button b=(Button)v;

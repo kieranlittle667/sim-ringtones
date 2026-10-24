@@ -33,6 +33,7 @@ public class MainActivity extends Activity {
     private String pendingLabel;
     private String statusText="Choose a ringtone, then call each SIM to test it.";
     private int sims;
+    private UpdateController updates;
 
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -41,6 +42,7 @@ public class MainActivity extends Activity {
             pendingLabel=state.getString("pendingLabel");
             statusText=state.getString("status",statusText);
         }
+        updates=new UpdateController(this,state);
         render();
     }
     @Override public void onSaveInstanceState(Bundle out) {
@@ -48,12 +50,15 @@ public class MainActivity extends Activity {
         out.putParcelable("pending",pending);
         out.putString("pendingLabel",pendingLabel);
         out.putString("status",statusText);
+        updates.saveState(out);
     }
     @Override protected void onResume() {
         super.onResume();
         // Refresh after returning from permissions or the system picker.
         render();
+        updates.onResume();
     }
+    @Override protected void onDestroy() { updates.close(); super.onDestroy(); }
     @Override protected void onPause() { stopPreview(); super.onPause(); }
     private int dp(float n) { return Math.round(n*getResources().getDisplayMetrics().density); }
     private GradientDrawable surface(int color,int radius) {
@@ -108,7 +113,19 @@ public class MainActivity extends Activity {
         }
         status=text(statusText,15,MUTED,false); status.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE); add(page,status,20);
         add(page,button("Refresh SIMs","Refresh SIMs and current ringtones",false,()->{render();announce("SIM list refreshed");}),12);
-        add(page,text("Saves on this device. No account, internet or background service. A live call to each number confirms the result.",13,MUTED,false),16);
+        add(page,text("Ringtones are saved on this device. No account or background service.",13,MUTED,false),16);
+        addUpdates();
+    }
+    private void addUpdates() {
+        TextView heading=text("Updates",21,TEXT,true); heading.setAccessibilityHeading(true); add(page,heading,24);
+        add(page,text("Checks GitHub for new releases when you open the app, at most once a day. Downloads and installation require your confirmation.",14,MUTED,false),6);
+        CheckBox automatic=new CheckBox(this); automatic.setText("Check for updates automatically"); automatic.setContentDescription("Check for updates automatically"); automatic.setTextSize(16); automatic.setTextColor(TEXT);
+        automatic.setButtonTintList(ColorStateList.valueOf(ACCENT)); automatic.setMinHeight(dp(52)); automatic.setPadding(dp(4),dp(8),dp(4),dp(8)); add(page,automatic,8);
+        TextView updateStatus=text("",15,MUTED,false); updateStatus.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE); add(page,updateStatus,8);
+        Button check=button("Check for updates","Check for SIM Ringtones updates",false,()->{}); add(page,check,8);
+        TextView notes=text("",14,MUTED,false); add(page,notes,8);
+        Button action=button("Download update","Download SIM Ringtones update",true,()->{}); add(page,action,8);
+        updates.bind(updateStatus,notes,check,action,automatic);
     }
     private int slot(PhoneAccountHandle h) {
         try {

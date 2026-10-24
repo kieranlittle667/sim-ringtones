@@ -32,3 +32,13 @@ Use 64-bit Windows, PowerShell 5.1 or 7, an internet connection for downloads an
 `build.ps1` writes `build/sim-ringtones.apk`, signed with a locally generated development key. For a release, set `SIM_RINGTONES_KEYSTORE` to a private PKCS12 keystore and `SIM_RINGTONES_STORE_PASSWORD` to its password, then run `./build.ps1 -Release`. The alias defaults to `simringtones`; use `-KeyAlias` to change it. Use the same password for the key and store. Clear the environment variable after building and back up the key securely. Release builds don't fall back to a development key.
 
 Official release APKs include a SHA-256 checksum and certificate fingerprint. Vendor tool downloads can change over time; identical APK hashes across rebuilds aren't guaranteed.
+
+## Updater tests
+
+Host tests include release metadata fixtures, version ordering, trusted download URLs, SHA-256 and size failures, cancellation and manifest permission checks. `tests/setup-test-tools.ps1` downloads a hash-pinned `org.json` JAR for host tests only. It is not bundled in the app; Android supplies its runtime JSON parser.
+
+`tests/build-updater-device-tests.ps1` creates an isolated app ID, `uk.co.kiera.simringtones.updatertest`, and APK fixtures with valid, wrong-key, wrong-package and older versions. It writes paths to `build/updater-device-paths.json`. Install those app/test APKs on a spare Android 17 phone, allow the isolated app to install packages and run `adb shell am instrument -w uk.co.kiera.simringtones.updatertest.tests/.UpdaterDeviceTests`. It exercises archive rejection, read-only file sharing and opening/cancelling Android's installer. It does not change SIM ringtones or replace the regular app. Keep the phone unlocked during the installer check. Remove both isolated test packages afterwards.
+
+For release testing, also check automatic checks on/off, manual checking offline, a real newer release, a cancelled download, rotation, returning from installation permission settings, installer cancellation and a completed installation. Use two consecutively versioned APKs signed with the same test key; never publish test fixtures as stable releases.
+
+Stable releases need a `vMAJOR.MINOR.PATCH` tag and exactly one asset named `sim-ringtones-MAJOR.MINOR.PATCH.apk`, uploaded normally so GitHub supplies its SHA-256 digest. Increase both Android version code and semantic version. Drafts and prereleases are ignored. This self-updater is intended for GitHub APK distribution; assess store policies separately before distributing through an app store.

@@ -19,6 +19,12 @@ Preview plays for up to eight seconds. Tap Preview again to stop it. **Use phone
 
 Use built-in sounds or local audio added to Android's ringtone library. Arbitrary files, streaming URLs and third-party content-provider selections aren't accepted. Removing a custom audio file later can stop that ringtone working.
 
+## Updates
+
+The app checks GitHub for new stable releases when you open it, at most once a day. You can turn this off or use **Check for updates** at any time.
+
+When an update is available, choose **Download update**, then **Install update**. Android may ask you to allow installations from SIM Ringtones. Every installation needs your confirmation. Ringtone settings continue to work offline.
+
 ## Requirements and limitations
 
 - Android 17 / API 37 or later. The minimum SDK is 37 because this uses Android 17's public per-phone-account ringtone API.
@@ -36,7 +42,7 @@ The interface uses native Android controls, labelled buttons, accessibility head
 
 `READ_PHONE_STATE` identifies active voice SIMs. `READ_PHONE_NUMBERS` is required by Android's phone-account API even though this app doesn't read or display your phone number. `WRITE_SETTINGS` lets it change ringtone settings and is a broad Android permission; enable it only if you're comfortable granting that access.
 
-There is no internet permission, analytics, advertising, account system or background service. See [Privacy](PRIVACY.md) and [Security](SECURITY.md).
+Internet access is used only for update checks and downloads from GitHub. There are no analytics, adverts, accounts or background services. See [Privacy](PRIVACY.md) and [Security](SECURITY.md).
 
 ## Build from source
 
