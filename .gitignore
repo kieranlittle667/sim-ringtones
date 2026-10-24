@@ -1,0 +1,13 @@
+.tools/
+build/
+dist/
+*.p12
+*.jks
+*.keystore
+*.dpapi.json
+*.apk
+*.idsig
+*.class
+__pycache__/
+local.properties
+.DS_Store

@@ -1,0 +1,5 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="uk.co.kiera.simringtones.tests">
+    <uses-sdk android:minSdkVersion="37" android:targetSdkVersion="37" />
+    <application android:label="SIM Ringtones device tests" />
+    <instrumentation android:name=".DeviceTests" android:targetPackage="uk.co.kiera.simringtones" />
+</manifest>

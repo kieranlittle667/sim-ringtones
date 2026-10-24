@@ -1,0 +1,17 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="uk.co.kiera.simringtones" android:versionCode="2" android:versionName="0.2.0">
+    <uses-sdk android:minSdkVersion="37" android:targetSdkVersion="37" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <queries>
+        <intent><action android:name="android.intent.action.RINGTONE_PICKER" /></intent>
+    </queries>
+    <application android:label="SIM Ringtones" android:theme="@style/AppTheme" android:allowBackup="false" android:usesCleartextTraffic="false" android:icon="@drawable/ic_launcher" android:supportsRtl="true">
+        <activity android:name=".MainActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

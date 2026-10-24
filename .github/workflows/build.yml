@@ -1,0 +1,33 @@
+name: Build and check
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Download build tools
+        shell: pwsh
+        run: ./setup-tools.ps1
+      - name: Check URI boundaries and manifest
+        shell: pwsh
+        run: ./tests/run-tests.ps1
+      - name: Build development APK and device tests
+        shell: pwsh
+        run: |
+          ./build.ps1
+          ./tests/build-tests.ps1
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: development-apks
+          path: |
+            build/sim-ringtones.apk
+            build/tests/tests.apk
+          retention-days: 7
