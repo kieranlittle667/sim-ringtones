@@ -2,10 +2,14 @@
 
 ## 0.3.1 — 4 November 2026
 
-- Build with checksum-pinned D8 9.5.29, which supports API 37 without the previous compiler warning.
-- Fail APK builds on D8 warnings and build updater test fixtures in CI.
-- Update the pinned checkout and artifact upload actions.
-- No changes to the ringtone interface or update workflow.
+A maintenance release that updates the Android 17 build tools and strengthens release checks.
+
+- Use Google's checksum-verified D8 9.5.29 compiler, which recognises Android 17 / API 37 and resolves the unsupported-API warning from the previous compiler.
+- Treat D8 compiler warnings as build failures, and build the isolated updater test app and APK fixtures in Windows CI.
+- Generate updater test versions from the app manifest so newer-version checks remain valid when the release version changes.
+- Update the commit-pinned GitHub checkout and artifact upload actions to 7.0.1 and 7.0.2.
+
+The app continues to require Android 17 / API 37 and a phone with per-account ringtone support enabled. This release contains no new ringtone controls or changes to the in-app update workflow.
 
 ## 0.3.0 — 24 October 2026
 
