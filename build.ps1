@@ -39,7 +39,7 @@ $sources=Get-ChildItem "$root/src" -Recurse -Filter *.java | ForEach-Object Full
 Check
 & "$jdk/bin/jar.exe" --create --file "$build/classes.jar" -C "$build/classes" .
 Check
-& "$bt/d8.bat" --lib $sdk --min-api 37 --output "$build/dex" "$build/classes.jar"
+& "$jdk/bin/java.exe" -cp "$root/.tools/r8-9.5.29.jar" com.android.tools.r8.D8 --map-diagnostics warning error --lib $sdk --min-api 37 --output "$build/dex" "$build/classes.jar"
 Check
 Push-Location "$build/dex"
 try { & "$jdk/bin/jar.exe" --update --file "$build/unsigned.apk" classes.dex; Check } finally { Pop-Location }

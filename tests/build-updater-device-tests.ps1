@@ -53,7 +53,7 @@ Check
 Check
 & "$jdk/bin/jar.exe" --create --file "$test/classes.jar" -C "$test/classes" .
 Check
-& "$bt/d8.bat" --lib $sdk --min-api 37 --output "$test/dex" "$test/classes.jar"
+& "$jdk/bin/java.exe" -cp "$root/.tools/r8-9.5.29.jar" com.android.tools.r8.D8 --map-diagnostics warning error --lib $sdk --min-api 37 --output "$test/dex" "$test/classes.jar"
 Check
 Push-Location "$test/dex"
 try { & "$jdk/bin/jar.exe" --update --file "$test/unsigned.apk" classes.dex; Check } finally { Pop-Location }

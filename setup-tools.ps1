@@ -26,3 +26,12 @@ foreach($path in @('platforms;android-37.0','build-tools;37.0.0')) {
     if($LASTEXITCODE -ne 0) { throw "SDK extraction failed: $path" }
     "Ready: $path"
 }
+# Build Tools 37 bundles an older D8 that does not recognise API 37.
+# Use Google's stable Maven release, pinned independently of the SDK archive.
+$r8=Join-Path $toolRoot 'r8-9.5.29.jar'
+$r8Sha256='f8c762ff84640b10083b934a47278758a7665977e618fab0c927fff00521dea3'
+if(!(Test-Path -LiteralPath $r8)) {
+    Invoke-WebRequest -UseBasicParsing 'https://dl.google.com/dl/android/maven2/com/android/tools/r8/9.5.29/r8-9.5.29.jar' -OutFile $r8
+}
+if((Get-FileHash -LiteralPath $r8 -Algorithm SHA256).Hash.ToLowerInvariant() -ne $r8Sha256) { throw 'D8 compiler checksum mismatch' }
+Write-Output 'Ready: D8 9.5.29 (SHA-256 verified)'
