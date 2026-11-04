@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Simplify the main screen by removing introductory text and hiding setup once permissions are granted.
+- Shorten ringtone and update messages while keeping accessible control labels and recovery guidance.
+
 ## 0.3.1 — 4 November 2026
 
 A maintenance release that updates the Android 17 build tools and strengthens release checks.
