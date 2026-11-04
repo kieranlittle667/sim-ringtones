@@ -1,9 +1,14 @@
 # Changelog
 
-## Unreleased
+## 0.3.2 — 4 November 2026
 
-- Simplify the main screen by removing introductory text and hiding setup once permissions are granted.
-- Shorten ringtone and update messages while keeping accessible control labels and recovery guidance.
+A simpler interface with less repeated guidance.
+
+- Remove the introductory slogan, subtitle, privacy footer and repeated update explanation from the main screen.
+- Show setup controls only when SIM or ringtone permissions are missing.
+- Remove the default test-call reminder and hide the ringtone status area until there is a result to show.
+- Shorten save, preview and updater messages, including download, verification and installer status.
+- Keep SIM-specific screen-reader labels, permission controls, reset confirmation and ringtone recovery guidance.
 
 ## 0.3.1 — 4 November 2026
 
