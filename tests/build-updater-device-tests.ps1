@@ -18,7 +18,14 @@ $fixtures=Join-Path $sandbox 'build/fixtures'
 New-Item -ItemType Directory -Force $fixtures | Out-Null
 Copy-Item (Join-Path $sandbox 'build/sim-ringtones.apk') (Join-Path $fixtures 'older.apk')
 # The update fixture has a newer version and the same signing key.
-[IO.File]::WriteAllText($manifest,$base.Replace('versionCode="3"','versionCode="4"').Replace('versionName="0.3.0"','versionName="0.3.1"'))
+[xml]$newerManifest=$base
+$androidNamespace='http://schemas.android.com/apk/res/android'
+$currentCode=[int]$newerManifest.manifest.GetAttribute('versionCode',$androidNamespace)
+$versionParts=$newerManifest.manifest.GetAttribute('versionName',$androidNamespace).Split('.')
+$newerVersion=($versionParts[0..1] -join '.')+'.'+([int]$versionParts[2]+1)
+$newerManifest.manifest.SetAttribute('versionCode',$androidNamespace,[string]($currentCode+1))
+$newerManifest.manifest.SetAttribute('versionName',$androidNamespace,$newerVersion)
+$newerManifest.Save($manifest)
 & (Join-Path $sandbox 'build.ps1')
 Copy-Item (Join-Path $sandbox 'build/sim-ringtones.apk') (Join-Path $fixtures 'valid.apk')
 $jdk=(Get-ChildItem "$root/.tools/jdk-*" -Directory | Select-Object -First 1).FullName
@@ -33,7 +40,7 @@ try {
     $env:SIM_RINGTONES_STORE_PASSWORD='android'
     & (Join-Path $sandbox 'build.ps1') -Release -KeyStore $wrongKey
 } finally { $env:SIM_RINGTONES_STORE_PASSWORD=$oldPassword }
-Copy-Item (Join-Path $sandbox 'build/sim-ringtones-0.3.1.apk') (Join-Path $fixtures 'wrong-key.apk')
+Copy-Item (Join-Path $sandbox ('build/sim-ringtones-'+$newerVersion+'.apk')) (Join-Path $fixtures 'wrong-key.apk')
 # Restore the base app; a public APK provides the wrong-package fixture.
 [IO.File]::WriteAllText($manifest,$base)
 & (Join-Path $sandbox 'build.ps1')

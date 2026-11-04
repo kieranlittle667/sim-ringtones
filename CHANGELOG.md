@@ -1,6 +1,13 @@
 # Changelog
 
-## 0.3.0 � 24 October 2026
+## 0.3.1 — 4 November 2026
+
+- Build with checksum-pinned D8 9.5.29, which supports API 37 without the previous compiler warning.
+- Fail APK builds on D8 warnings and build updater test fixtures in CI.
+- Update the pinned checkout and artifact upload actions.
+- No changes to the ringtone interface or update workflow.
+
+## 0.3.0 — 24 October 2026
 
 - Check GitHub for updates on opening the app, with a daily limit and an off switch.
 - Download and verify stable releases, then hand installation to Android for confirmation.
