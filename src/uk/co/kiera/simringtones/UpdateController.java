@@ -31,7 +31,7 @@ final class UpdateController {
         preferences=activity.getSharedPreferences("updates",Context.MODE_PRIVATE);
         try { currentVersion=activity.getPackageManager().getPackageInfo(activity.getPackageName(),0).versionName; }
         catch(PackageManager.NameNotFoundException e) { throw new IllegalStateException(e); }
-        message="Installed version: "+currentVersion;
+        message="Version "+currentVersion;
         if(state==null||!state.containsKey("update_tag")) {
             state=new Bundle();
             state.putString("update_tag",preferences.getString("tag",null));
@@ -48,7 +48,7 @@ final class UpdateController {
                     &&UpdatePolicy.digest(digest)&&size>0&&size<=UpdatePolicy.MAX_APK_BYTES) {
                 available=new UpdateClient.Release(tag,url,digest,state.getString("update_notes",""),size);
                 downloaded=state.getBoolean("update_downloaded")&&cachedApk().isFile();
-                message=downloaded?"Update downloaded. Ready to install.":tag+" is available.";
+                message=downloaded?"Update ready to install.":tag+" is available.";
             }
         }
     }
@@ -102,10 +102,10 @@ final class UpdateController {
                     if(release==null) saved.remove("tag").remove("url").remove("digest").remove("notes").remove("size").remove("downloaded_digest");
                     else saved.putString("tag",release.tag).putString("url",release.url).putString("digest",release.digest).putString("notes",release.notes).putLong("size",release.size);
                     saved.apply();
-                    message=release==null?"SIM Ringtones is up to date ("+currentVersion+").":release.tag+" is available.";
+                    message=release==null?"Up to date ("+currentVersion+").":release.tag+" is available.";
                 });
             } catch(Exception e) {
-                ui(()->{ busy=false; message="Could not check for updates. Check your connection and try again."; });
+                ui(()->{ busy=false; message="Update check failed. Check your connection."; });
             }
         });
     }
@@ -117,22 +117,22 @@ final class UpdateController {
         worker.execute(()->{
             try {
                 UpdateClient.download(activity,release);
-                ui(()->{ preferences.edit().putString("downloaded_digest",release.digest).apply(); downloaded=true; busy=false; message="Update downloaded. Ready to install."; });
+                ui(()->{ preferences.edit().putString("downloaded_digest",release.digest).apply(); downloaded=true; busy=false; message="Update ready to install."; });
             } catch(Exception e) {
-                ui(()->{ downloaded=false; busy=false; message="Could not verify the update. Nothing was installed. Check your connection or try again later."; });
+                ui(()->{ downloaded=false; busy=false; message="Update download or verification failed. Try again."; });
             }
         });
     }
     private void install() {
         if(closed||busy||available==null||!downloaded) return;
         if(!activity.getPackageManager().canRequestPackageInstalls()) {
-            message="Allow SIM Ringtones to install updates, then return and tap Install update."; refresh();
+            message="Allow app installs, then return to install."; refresh();
             try { activity.startActivity(new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,Uri.parse("package:"+activity.getPackageName()))); }
-            catch(RuntimeException e) { message="Open Android settings and allow installing apps from SIM Ringtones, then try again."; refresh(); }
+            catch(RuntimeException e) { message="Allow app installs from SIM Ringtones in Android settings."; refresh(); }
             return;
         }
         UpdateClient.Release release=available;
-        busy=true; message="Verifying update before installation…"; refresh();
+        busy=true; message="Verifying update…"; refresh();
         worker.execute(()->{
             try {
                 // Recheck cached bytes and identity after returning from settings or recreation.
@@ -142,13 +142,13 @@ final class UpdateController {
                 UpdateClient.verifyArchive(activity,cachedApk(),release);
                 ui(()->{ busy=false; openInstaller(); });
             } catch(Exception e) {
-                ui(()->{ preferences.edit().remove("downloaded_digest").apply(); busy=false; downloaded=false; message="The cached update could not be verified. Download it again."; });
+                ui(()->{ preferences.edit().remove("downloaded_digest").apply(); busy=false; downloaded=false; message="Update verification failed. Download again."; });
             }
         });
     }
     private void openInstaller() {
         // Never open an installer in the background after a download or verification.
-        if(!activity.hasWindowFocus()) { message="Update verified. Tap Install update to continue."; return; }
+        if(!activity.hasWindowFocus()) { message="Update verified. Ready to install."; return; }
         Uri uri=Uri.parse("content://"+activity.getPackageName()+".updates/update.apk");
         Intent intent=new Intent(Intent.ACTION_INSTALL_PACKAGE).setData(uri).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         try {
@@ -159,8 +159,8 @@ final class UpdateController {
             }
             intent.setComponent(new ComponentName(installer.activityInfo.packageName,installer.activityInfo.name));
             activity.startActivity(intent);
-            message="Finish the update in Android's installer. If cancelled, tap Install update to try again.";
-        } catch(RuntimeException e) { message="Could not open Android's package installer. Nothing was installed."; }
+            message="Installer opened.";
+        } catch(RuntimeException e) { message="Could not open Android's installer."; }
     }
     void close() { closed=true; worker.shutdownNow(); }
 }
