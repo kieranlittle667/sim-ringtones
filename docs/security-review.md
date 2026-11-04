@@ -33,4 +33,4 @@ The app has no runtime dependencies, internet permission, server, exported servi
 
 No critical or high-severity application issue was identified in this scoped review. That conclusion is limited to the checks above and isn't a vulnerability-free certification.
 
-Build note: Google's installed build-tools 37.0.0 D8 emits a warning that its compiler recognises API levels up to 36. It completes DEX generation for min API 37; APK signature and alignment verification pass. This warning is recorded rather than hidden. Device verification of this newly hardened APK remains outstanding.
+Historical build note: the 0.2.0 and 0.3.0 builds used the D8 bundled with Build Tools 37.0.0, which warned that it only recognised API levels through 36. On 4 November 2026, the build scripts switched to Google's standalone D8 9.5.29 with a pinned SHA-256, retaining min API 37 and treating compiler warnings as errors. This fixes the warning for future builds; it does not alter previously published APKs or establish fresh device verification.
